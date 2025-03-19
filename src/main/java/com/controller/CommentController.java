@@ -39,13 +39,5 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getCommentById(blogId, commentId));
     }
 
-    // ✅ Delete a Comment by ID
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Boolean> deleteComment(@PathVariable Long blogId, @PathVariable Long commentId) {
-        if (commentService.deleteComment(blogId, commentId)) {
-            return ResponseEntity.ok(true);
-        } else {
-            throw new ResourceNotFoundException("Comment not found with id: " + commentId);
-        }
-    }
+    
 }

@@ -23,6 +23,7 @@ public class CommentEntity {
         this.comment = comment;
     }
 
+
     public Long getId() {
         return id;
     }
