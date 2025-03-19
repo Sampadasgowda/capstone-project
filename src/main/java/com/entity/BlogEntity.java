@@ -1,6 +1,7 @@
 package com.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "blogs")
@@ -12,6 +13,9 @@ public class BlogEntity {
 
     private String title;
     private String content;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CommentEntity> comments;
 
     public BlogEntity() {}
 
@@ -43,5 +47,13 @@ public class BlogEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
     }
 }

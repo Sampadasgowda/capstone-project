@@ -10,13 +10,16 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long blogId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
+    private BlogEntity blog;
+
     private String comment;
 
     public CommentEntity() {}
 
-    public CommentEntity(Long blogId, String comment) {
-        this.blogId = blogId;
+    public CommentEntity(BlogEntity blog, String comment) {
+        this.blog = blog;
         this.comment = comment;
     }
 
@@ -28,12 +31,12 @@ public class CommentEntity {
         this.id = id;
     }
 
-    public Long getBlogId() {
-        return blogId;
+    public BlogEntity getBlog() {
+        return blog;
     }
 
-    public void setBlogId(Long blogId) {
-        this.blogId = blogId;
+    public void setBlog(BlogEntity blog) {
+        this.blog = blog;
     }
 
     public String getComment() {
