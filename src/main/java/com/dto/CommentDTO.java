@@ -4,9 +4,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CommentDTO {
-
+    
     private Long id;
-
+    
     @NotNull(message = "Blog ID cannot be null")
     private Long blogId;
 
@@ -14,9 +14,7 @@ public class CommentDTO {
     @Size(min = 3, max = 200, message = "Comment must be between 3 and 200 characters")
     private String comment;
 
-    public CommentDTO() {
-        // Default constructor
-    }
+    public CommentDTO() {}
 
     public CommentDTO(Long id, Long blogId, String comment) {
         this.id = id;

@@ -5,13 +5,9 @@ import com.entity.BlogEntity;
 import com.exception.ResourceNotFoundException;
 import com.repository.BlogRepository;
 import com.service.BlogService;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
-
-
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -22,7 +18,7 @@ public class BlogServiceImpl implements BlogService {
         this.blogRepository = blogRepository;
     }
 
-    // Create a blog
+    // ✅ CREATE
     @Override
     public BlogDTO createBlog(BlogDTO blogDTO) {
         BlogEntity blogEntity = convertToEntity(blogDTO);
@@ -30,68 +26,52 @@ public class BlogServiceImpl implements BlogService {
         return convertToDTO(savedBlog);
     }
 
-    // Get blog by id
+    // ✅ GET BY ID (Better Exception Handling)
     @Override
     public BlogDTO getBlogById(Long id) {
-        BlogEntity blogEntity = blogRepository.findById(id)
+        BlogEntity blog = blogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: " + id));
-
-        return convertToDTO(blogEntity);
-    }
-    
- // Get all blogs
-    @Override
-    public List<BlogDTO> findAllBlogs() {
-        List<BlogEntity> blogs = blogRepository.findAll();
-        List<BlogDTO> blogDTOs = new ArrayList<>();
-        
-        for (BlogEntity blog : blogs) {
-            blogDTOs.add(convertToDTO(blog));
-        }
-        
-        return blogDTOs;
+        return convertToDTO(blog);
     }
 
-
-    // Update a blog
+    // ✅ UPDATE (Better Exception Handling)
     @Override
     public BlogDTO updateBlog(Long id, BlogDTO blogDTO) {
-        BlogEntity blogEntity = blogRepository.findById(id)
+        BlogEntity blog = blogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: " + id));
 
-        blogEntity.setTitle(blogDTO.getTitle());
-        blogEntity.setContent(blogDTO.getContent());
-
-        BlogEntity updatedBlog = blogRepository.save(blogEntity);
+        blog.setTitle(blogDTO.getTitle());
+        blog.setContent(blogDTO.getContent());
+        BlogEntity updatedBlog = blogRepository.save(blog);
+        
         return convertToDTO(updatedBlog);
     }
 
-
-    // Delete a blog
-    @Override
+    // ✅ DELETE
+    @Override  
     public boolean deleteBlog(Long id) {
-        BlogEntity blogEntity = blogRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: " + id));
-
-        blogRepository.delete(blogEntity);
+        if (!blogRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Blog not found with id: " + id);
+        }
+        blogRepository.deleteById(id);
         return true;
     }
 
-    // Convert BlogDTO to BlogEntity
-    private BlogEntity convertToEntity(BlogDTO blogDTO) {
-        BlogEntity blogEntity = new BlogEntity();
-        blogEntity.setTitle(blogDTO.getTitle());
-        blogEntity.setContent(blogDTO.getContent());
-        return blogEntity;
+    // ✅ GET ALL BLOGS
+    @Override
+    public List<BlogDTO> findAllBlogs() {
+        return blogRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
- // Convert BlogEntity to BlogDTO
+    // ✅ ENTITY TO DTO CONVERSION
     private BlogDTO convertToDTO(BlogEntity blogEntity) {
-        BlogDTO blogDTO = new BlogDTO();
-        blogDTO.setId(blogEntity.getId());  
-        blogDTO.setTitle(blogEntity.getTitle());
-        blogDTO.setContent(blogEntity.getContent());
-        return blogDTO;
+        return new BlogDTO(blogEntity.getId(), blogEntity.getTitle(), blogEntity.getContent());
     }
 
+    // ✅ DTO TO ENTITY CONVERSION
+    private BlogEntity convertToEntity(BlogDTO blogDTO) {
+        return new BlogEntity(blogDTO.getId(),blogDTO.getTitle(), blogDTO.getContent());
+    }
 }

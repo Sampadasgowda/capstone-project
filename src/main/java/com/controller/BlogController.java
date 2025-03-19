@@ -1,13 +1,14 @@
 package com.controller;
 
 import com.dto.BlogDTO;
+import com.exception.ResourceNotFoundException;
 import com.service.BlogService;
-
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/blogs")
@@ -19,37 +20,37 @@ public class BlogController {
         this.blogService = blogService;
     }
 
-    // Create a blog
+    // ✅ Create a Blog
     @PostMapping
-    public ResponseEntity<BlogDTO> createBlog(@RequestBody BlogDTO blogDTO) {
+    public ResponseEntity<BlogDTO> createBlog(@Valid @RequestBody BlogDTO blogDTO) {
         BlogDTO createdBlog = blogService.createBlog(blogDTO);
-        return new ResponseEntity<>(createdBlog, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBlog);
     }
 
-    // Get blog by ID
     @GetMapping("/{id}")
     public ResponseEntity<BlogDTO> getBlogById(@PathVariable Long id) {
-        BlogDTO blogDTO = blogService.getBlogById(id);
-        return new ResponseEntity<>(blogDTO, HttpStatus.OK);
+        return ResponseEntity.ok(blogService.getBlogById(id)); // No Optional
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BlogDTO> updateBlog(@PathVariable Long id, @Valid @RequestBody BlogDTO blogDTO) {
+        return ResponseEntity.ok(blogService.updateBlog(id, blogDTO)); // No Optional
+    }
+
+
+    // ✅ Delete a Blog by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBlog(@PathVariable Long id) {
+        if (!blogService.deleteBlog(id)) {
+            throw new ResourceNotFoundException("Blog not found with id: " + id);
+        }
+        return ResponseEntity.noContent().build(); // ✅ Returns HTTP 204 No Content
+    }
+
+    // ✅ Get all Blogs
     @GetMapping
     public ResponseEntity<List<BlogDTO>> getAllBlogs() {
-        List<BlogDTO> blogDTOs = blogService.findAllBlogs();
-        return new ResponseEntity<>(blogDTOs, HttpStatus.OK);
-    }
-
-
-    // Update blog by ID
-    @PutMapping("/{id}")
-    public ResponseEntity<BlogDTO> updateBlog(@PathVariable Long id, @RequestBody BlogDTO blogDTO) {
-        BlogDTO updatedBlog = blogService.updateBlog(id, blogDTO);
-        return new ResponseEntity<>(updatedBlog, HttpStatus.OK);
-    }
-
-    // Delete blog by ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteBlog(@PathVariable Long id) {
-        boolean isDeleted = blogService.deleteBlog(id);
-        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+        List<BlogDTO> blogs = blogService.findAllBlogs();
+        return ResponseEntity.ok(blogs);
     }
 }

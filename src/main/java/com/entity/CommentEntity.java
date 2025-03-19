@@ -1,36 +1,23 @@
 package com.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import javax.persistence.*;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "comments")
 public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "blog_id", nullable = false)
-    private BlogEntity blog;
-
+    private Long blogId;
     private String comment;
 
-    public CommentEntity() {
-        // Default constructor
-    }
+    public CommentEntity() {}
 
-    public CommentEntity(Long id, String comment, BlogEntity blog) {
-        this.id = id;
+    public CommentEntity(Long blogId, String comment) {
+        this.blogId = blogId;
         this.comment = comment;
-        this.blog = blog;
     }
 
     public Long getId() {
@@ -41,19 +28,19 @@ public class CommentEntity {
         this.id = id;
     }
 
+    public Long getBlogId() {
+        return blogId;
+    }
+
+    public void setBlogId(Long blogId) {
+        this.blogId = blogId;
+    }
+
     public String getComment() {
         return comment;
     }
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public BlogEntity getBlog() {
-        return blog;
-    }
-
-    public void setBlog(BlogEntity blog) {
-        this.blog = blog;
     }
 }

@@ -19,8 +19,9 @@ public class BlogDTO {
         // Default constructor
     }
 
-    public BlogDTO( String title, String content) {
-        
+   
+    public BlogDTO(Long id, String title, String content) {
+        this.id = id;
         this.title = title;
         this.content = content;
     }

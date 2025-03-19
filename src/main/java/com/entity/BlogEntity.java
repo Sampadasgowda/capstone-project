@@ -1,31 +1,24 @@
 package com.entity;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "blog")
+@Table(name = "blogs")
 public class BlogEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String title;
     private String content;
 
-    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CommentEntity> comments;
+    public BlogEntity() {}
 
-    public BlogEntity() {
-        // Default constructor
-    }
-
-    public BlogEntity( String title, String content, List<CommentEntity> comments) {
-        
+    public BlogEntity(Long id, String title, String content) {
+        this.id = id;
         this.title = title;
         this.content = content;
-        this.comments = comments;
     }
 
     public Long getId() {
@@ -50,13 +43,5 @@ public class BlogEntity {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public List<CommentEntity> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentEntity> comments) {
-        this.comments = comments;
     }
 }
